@@ -39,7 +39,7 @@ real API is ready.
 
 Create a `mockData.js` file `src/` and follow the format below
 
-```json
+```js
 export const rooms = [
   {
     id: 0,
