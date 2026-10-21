@@ -26,7 +26,6 @@ Open http://localhost:5173
 ```
 src/
   api.js          all HTTP calls in one place
-  mockData.js     fallback data if the API is unreachable
   useFetch.js     small hook: { data, loading, error }
   components/     Navbar, RoomCard, Status
   pages/          one file per route
