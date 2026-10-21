@@ -7,7 +7,7 @@ export default function Home() {
     <section className="hero">
       <h1>Book a room at SDU</h1>
       <p className="muted">
-        Browse lecture halls, seminar rooms and study spaces, and check when they are free.
+        Browse lecture halls, classrooms and study spaces, and check when they are free.
       </p>
       <div className="button-row">
         <button onClick={() => navigate("/rooms")}>Browse rooms</button>

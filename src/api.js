@@ -2,7 +2,8 @@ import * as mock from "./mockData";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
-const MOCK_DELAY_MS = 1200;
+const MOCK_DELAY_MS = 600;
+// Fake delay
 
 // Fetch JSON from the backend; if it fails, use the mock fallback so the
 // frontend can still be demoed without a running API.
@@ -13,7 +14,6 @@ async function request(path, fallback) {
     return await res.json();
   } catch (err) {
     console.warn(`API call to ${path} failed, using mock data:`, err.message);
-    // Small artificial delay so the loading skeletons are visible in demos.
     await new Promise((resolve) => setTimeout(resolve, MOCK_DELAY_MS));
     return fallback();
   }

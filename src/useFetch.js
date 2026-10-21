@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-// Tiny data-loading hook: { data, loading, error }
 export default function useFetch(fetcher, deps = []) {
   const [state, setState] = useState({ data: null, loading: true, error: null });
 
@@ -13,7 +12,7 @@ export default function useFetch(fetcher, deps = []) {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, deps);
 
   return state;

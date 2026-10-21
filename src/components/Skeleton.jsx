@@ -1,4 +1,4 @@
-// Translucent placeholder "cards" shown while data is loading.
+
 
 export function SkeletonCards({ count = 4 }) {
   return (
