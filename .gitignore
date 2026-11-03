@@ -1,2 +1,5 @@
 node_modules/
-src/mockData.js
+dist/
+.env
+DATA_STRUCTURE.md
+sdu-booking-backend-main/

@@ -1,16 +1,26 @@
 import { useNavigate } from "react-router-dom";
+import Reveal from "./Reveal.jsx";
 
-export default function RoomCard({ room }) {
+export default function RoomCard({ room, index = 0 }) {
   const navigate = useNavigate();
 
   return (
-    <article className="card">
+    <Reveal as="article" className="card" index={index}>
       <h3>{room.name}</h3>
       <p className="muted">
         {room.building} · Floor {room.floor}
       </p>
       <p>Capacity: {room.capacity}</p>
-      <button onClick={() => navigate(`/rooms/${room.id}`)}>View details</button>
-    </article>
+      {room.equipment?.length > 0 && (
+        <div className="chips">
+          {room.equipment.map((item) => (
+            <span key={item} className="chip">
+              {item}
+            </span>
+          ))}
+        </div>
+      )}
+      <button onClick={() => navigate(`/rooms/${room.id}`)}>View &amp; book</button>
+    </Reveal>
   );
 }
