@@ -1,4 +1,5 @@
-// demo only, not real auth. swap for the backend login once it exists
+// DEMO ONLY: not real security, the backend has no login yet
+// student ids match the userLogin values in the backend seed
 export const DEMO_USERS = [
   { login: "240107001", password: "student123", role: "student", name: "Student 240107001" },
   { login: "240107002", password: "student123", role: "student", name: "Student 240107002" },

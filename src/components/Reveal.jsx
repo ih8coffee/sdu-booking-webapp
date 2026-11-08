@@ -1,7 +1,8 @@
 import { useRef } from "react";
 import { staggerDelay } from "../stagger";
 
-// delay is read once on mount so re-renders don't replay the animation
+// delay is read once at mount so re-renders don't replay the animation
+// variant="fade": opacity only (table rows)
 export default function Reveal({
   as: Tag = "div",
   index = 0,

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
+// saved choice "light" | "dark", otherwise the OS setting (<html data-theme>)
 const KEY = "sdu.theme";
 const QUERY = "(prefers-color-scheme: dark)";
 
@@ -40,7 +41,7 @@ export default function useTheme() {
     try {
       localStorage.setItem(KEY, next);
     } catch {
-      // ignore
+      /* storage unavailable */
     }
   }, [theme]);
 

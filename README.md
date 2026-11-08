@@ -1,7 +1,7 @@
 # SDU Booking (sdu-booking-webapp)
 
-React (Vite) frontend for a university room-booking system. It talks to the Django
-backend (`sdu-booking-backend`).
+React (Vite) frontend for a university room-booking system. It talks to the team's Django
+backend (`sdu-booking-backend`), which we do not modify.
 
 See [DATA_STRUCTURE.md](DATA_STRUCTURE.md) for the data shapes and the list of backend gaps.
 
@@ -48,7 +48,8 @@ The backend has no login yet, so accounts live in `src/auth/demoUsers.js` (not s
 
 The backend can only **list** bookings. Reservations made in the app are stored in the browser
 (`localStorage`) and merged with the backend's list, so they are not shared between browsers
-or visible to the backend. Backend bookings are shown read-only.
+or visible to the backend. Backend bookings are shown read-only. See section 3 of
+DATA_STRUCTURE.md for what the backend would need to add.
 
 ## Structure
 
@@ -61,3 +62,15 @@ src/
   pages/                      Login, Home, Rooms, RoomDetail, MyBookings, Manage
   mockData.js                 fallback data when the backend is down
 ```
+
+## Loading and entrance animations
+
+- While data loads, translucent skeleton placeholders fade in one after another and shimmer out
+  of phase (`src/components/Skeleton.jsx`).
+- When data arrives, cards, stat tiles, list rows and table rows fade up one after another
+  (`src/components/Reveal.jsx`). Wrap any new list item in `<Reveal index={i}>`.
+- The timing lives in `src/stagger.js`: the gap between items shrinks as a list grows, with a few
+  milliseconds of fixed jitter so it doesn't feel mechanical, and the total is capped at 520ms.
+  Tweak `STEP_MS`, `EXPONENT` and `MAX_MS` there.
+- Items already on screen never replay when you filter, reserve or approve; only new items animate.
+- Everything is switched off for people who enable "reduce motion" in their OS.

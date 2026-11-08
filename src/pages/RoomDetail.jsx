@@ -19,6 +19,7 @@ export default function RoomDetail() {
   const slots = useFetch(() => getRoomSlots(id), [id]);
   const [notice, setNotice] = useState(null);
 
+  // group slots by day
   const days = useMemo(() => {
     const groups = new Map();
     [...(slots.data || [])]

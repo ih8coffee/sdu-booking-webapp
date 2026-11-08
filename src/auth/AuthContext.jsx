@@ -17,7 +17,7 @@ function saveUser(user) {
     if (user) localStorage.setItem(KEY, JSON.stringify(user));
     else localStorage.removeItem(KEY);
   } catch {
-    // ignore
+    /* storage unavailable */
   }
 }
 
@@ -26,6 +26,7 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(loadUser);
 
+  // role: "student" | "staff" (the tab used to log in)
   const login = useCallback((role, loginId, password) => {
     const account = DEMO_USERS.find((u) => u.login === loginId);
     if (!account || account.password !== password) {

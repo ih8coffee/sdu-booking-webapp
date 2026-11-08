@@ -1,4 +1,5 @@
-// backend sends naive local datetimes, no timezone
+// backend sends naive "YYYY-MM-DDTHH:MM" (local time, no timezone)
+
 export const dayKey = (iso) => iso.slice(0, 10);
 
 export const fmtDate = (iso) =>

@@ -1,8 +1,9 @@
 import * as mock from "./mockData";
 
+// Django backend under /api, GET only for now (see DATA_STRUCTURE.md)
 const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000/api").replace(/\/$/, "");
 
-// mock fallback when the backend is unreachable. delay keeps the skeletons visible
+// backend unreachable -> mock data, delay keeps the skeletons visible
 const MOCK_DELAY_MS = 1200;
 
 export const OFFLINE_EVENT = "sdu-api-offline";
@@ -27,7 +28,7 @@ async function request(path, fallback) {
   try {
     res = await fetch(`${BASE_URL}${path}`);
   } catch (err) {
-    // network failure only, http errors are real answers
+    // network failure only, HTTP errors are real answers
     console.warn(`API call to ${path} failed (${err.message}), using mock data`);
     markOffline();
     await new Promise((resolve) => setTimeout(resolve, MOCK_DELAY_MS));
@@ -38,7 +39,7 @@ async function request(path, fallback) {
   try {
     body = await res.json();
   } catch {
-    // not json
+    /* non-JSON body */
   }
   if (!res.ok) {
     throw new ApiError(body?.error || `Request failed (HTTP ${res.status})`, res.status);
@@ -46,10 +47,10 @@ async function request(path, fallback) {
   return body;
 }
 
-// GET /rooms (bookable only)
+// GET /rooms -> Room[] (only bookable = true)
 export const getRooms = () => request("/rooms", () => mock.rooms);
 
-// GET /rooms/:id
+// GET /rooms/:id -> Room | 404 { error }
 export const getRoom = (id) =>
   request(`/rooms/${id}`, () => {
     const room = mock.rooms.find((r) => String(r.id) === String(id));
@@ -57,8 +58,8 @@ export const getRoom = (id) =>
     return room;
   });
 
-// GET /rooms/:id/slots
+// GET /rooms/:id/slots -> Slot[] | 404 { error }
 export const getRoomSlots = (id) => request(`/rooms/${id}/slots`, () => mock.slots(id));
 
-// GET /bookings (everyone's, no user info)
+// GET /bookings -> Booking[] (everyone's, no user info)
 export const getBookings = () => request("/bookings", () => mock.bookings());

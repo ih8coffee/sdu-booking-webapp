@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
+// { data, loading, error }
 export default function useFetch(fetcher, deps = []) {
   const [state, setState] = useState({ data: null, loading: true, error: null });
-  const [tick, setTick] = useState(0);
-  const reload = useCallback(() => setTick((t) => t + 1), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -15,7 +14,7 @@ export default function useFetch(fetcher, deps = []) {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [...deps, tick]);
+  }, deps);
 
-  return { ...state, reload };
+  return state;
 }

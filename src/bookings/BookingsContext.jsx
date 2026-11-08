@@ -2,8 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { getBookings } from "../api";
 import useFetch from "../useFetch";
 
-// TODO: backend only has GET /bookings, so reservations live in localStorage ("local")
-// next to the backend's ("server"). once POST/PATCH exist only reserve() + setStatus() change
+// backend only lists bookings, so reservations are "local" (localStorage) and merged
+// with the backend's "server" ones. reserve() and setStatus() change when POST/PATCH exist
 
 const KEY = "sdu.localBookings";
 const ACTIVE = ["pending", "confirmed"];
@@ -30,20 +30,22 @@ export function BookingsProvider({ children }) {
     try {
       localStorage.setItem(KEY, JSON.stringify(local));
     } catch {
-      // ignore
+      /* storage unavailable */
     }
   }, [local]);
 
+  // { id, source, roomId, roomName, start, end, status, userLogin }
   const all = useMemo(() => {
     const fromServer = (server.data || []).map((b) => ({
       ...b,
       id: `server-${b.id}`,
       source: "server",
-      userLogin: null, // api doesn't say who booked
+      userLogin: null, // API doesn't expose who made it
     }));
     return [...fromServer, ...local];
   }, [server.data, local]);
 
+  // active (pending/confirmed) booking for a room + time window
   const findActive = useCallback(
     (roomId, start, end) =>
       all.find(
@@ -52,6 +54,7 @@ export function BookingsProvider({ children }) {
     [all]
   );
 
+  // students: pending, staff: confirmed
   const reserve = useCallback(
     (room, slot, user) => {
       if (findActive(room.id, slot.start, slot.end)) {
@@ -76,6 +79,7 @@ export function BookingsProvider({ children }) {
     [findActive]
   );
 
+  // status: "confirmed" | "rejected" | "cancelled" (local only)
   const setStatus = useCallback((id, status) => {
     setLocal((prev) => prev.map((b) => (b.id === id ? { ...b, status } : b)));
   }, []);

@@ -1,4 +1,4 @@
-// fallback data for when the backend is down
+// fallback when the backend is down, same shapes as the API
 
 const pad = (n) => String(n).padStart(2, "0");
 const today = () => {
