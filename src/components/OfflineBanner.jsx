@@ -13,8 +13,8 @@ export default function OfflineBanner() {
   if (!offline) return null;
   return (
     <div className="banner">
-      Can't reach the backend, so demo data is shown. Check that the Django server is running and
-      that <code>VITE_API_URL</code> is correct.
+      Can't reach the backend, so sample data is shown and sign in won't work. Check that the
+      server is running and that <code>VITE_API_URL</code> is correct.
     </div>
   );
 }

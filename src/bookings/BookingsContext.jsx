@@ -2,8 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { getBookings } from "../api";
 import useFetch from "../useFetch";
 
-// backend only lists bookings, so reservations are "local" (localStorage) and merged
-// with the backend's "server" ones. reserve() and setStatus() change when POST/PATCH exist
+// TODO: POST /bookings and PATCH /bookings/:id. until then reservations are "local"
+// (localStorage) and merged with the backend's "server" ones. only reserve() and setStatus() change
 
 const KEY = "sdu.localBookings";
 const ACTIVE = ["pending", "confirmed"];
@@ -40,7 +40,7 @@ export function BookingsProvider({ children }) {
       ...b,
       id: `server-${b.id}`,
       source: "server",
-      userLogin: null, // API doesn't expose who made it
+      userLogin: null, // api doesn't send it
     }));
     return [...fromServer, ...local];
   }, [server.data, local]);
@@ -79,7 +79,7 @@ export function BookingsProvider({ children }) {
     [findActive]
   );
 
-  // status: "confirmed" | "rejected" | "cancelled" (local only)
+  // "confirmed" | "rejected" | "cancelled", local ones only
   const setStatus = useCallback((id, status) => {
     setLocal((prev) => prev.map((b) => (b.id === id ? { ...b, status } : b)));
   }, []);

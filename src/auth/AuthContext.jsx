@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
-import { DEMO_USERS } from "./demoUsers";
+import { postLogin } from "../api";
 
 const KEY = "sdu.user";
 
@@ -26,19 +26,23 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(loadUser);
 
-  // role: "student" | "staff" (the tab used to log in)
-  const login = useCallback((role, loginId, password) => {
-    const account = DEMO_USERS.find((u) => u.login === loginId);
-    if (!account || account.password !== password) {
-      return { ok: false, error: "Wrong ID or password." };
+  // role is the tab picked on the login page, "student" | "staff"
+  const login = useCallback(async (role, loginId, password) => {
+    let data;
+    try {
+      data = await postLogin(loginId, password, role);
+    } catch (err) {
+      return { ok: false, error: err.message };
     }
-    if (account.role !== role) {
-      return {
-        ok: false,
-        error: `This is a ${account.role} account. Use the ${account.role} tab to sign in.`,
-      };
+
+    if (data.result === 1) return { ok: false, error: "Wrong ID or password." };
+    if (data.result === 2) {
+      const other = role === "student" ? "staff" : "student";
+      return { ok: false, error: `That isn't a ${role} account. Try the ${other} tab.` };
     }
-    const next = { login: account.login, name: account.name, role: account.role };
+    if (data.result !== 0) return { ok: false, error: "Login failed, try again." };
+
+    const next = { login: data.login, name: data.name, role };
     setUser(next);
     saveUser(next);
     return { ok: true };

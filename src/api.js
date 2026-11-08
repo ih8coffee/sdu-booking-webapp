@@ -1,9 +1,9 @@
 import * as mock from "./mockData";
 
-// Django backend under /api, GET only for now (see DATA_STRUCTURE.md)
+// backend lives under /api, see DATA_STRUCTURE.md
 const BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000/api").replace(/\/$/, "");
 
-// backend unreachable -> mock data, delay keeps the skeletons visible
+// backend down -> mock data, delay so the skeletons show
 const MOCK_DELAY_MS = 1200;
 
 export const OFFLINE_EVENT = "sdu-api-offline";
@@ -28,7 +28,7 @@ async function request(path, fallback) {
   try {
     res = await fetch(`${BASE_URL}${path}`);
   } catch (err) {
-    // network failure only, HTTP errors are real answers
+    // only network errors fall back, http errors are real answers
     console.warn(`API call to ${path} failed (${err.message}), using mock data`);
     markOffline();
     await new Promise((resolve) => setTimeout(resolve, MOCK_DELAY_MS));
@@ -39,7 +39,7 @@ async function request(path, fallback) {
   try {
     body = await res.json();
   } catch {
-    /* non-JSON body */
+    /* not json */
   }
   if (!res.ok) {
     throw new ApiError(body?.error || `Request failed (HTTP ${res.status})`, res.status);
@@ -63,3 +63,28 @@ export const getRoomSlots = (id) => request(`/rooms/${id}/slots`, () => mock.slo
 
 // GET /bookings -> Booking[] (everyone's, no user info)
 export const getBookings = () => request("/bookings", () => mock.bookings());
+
+// POST /login, form encoded because the backend reads request.POST
+// result: 0 ok, 1 wrong login/password, 2 wrong role
+export async function postLogin(login, password, role) {
+  let res;
+  try {
+    res = await fetch(`${BASE_URL}/login`, {
+      method: "POST",
+      body: new URLSearchParams({ login, password, role }),
+    });
+  } catch {
+    throw new ApiError("Can't reach the server.", 0);
+  }
+
+  let body = null;
+  try {
+    body = await res.json();
+  } catch {
+    /* not json */
+  }
+  if (!res.ok || !body) {
+    throw new ApiError(body?.error || `Login failed (HTTP ${res.status})`, res.status);
+  }
+  return body;
+}

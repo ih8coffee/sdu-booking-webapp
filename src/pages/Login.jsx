@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext.jsx";
-import { DEMO_USERS } from "../auth/demoUsers";
-import Reveal from "../components/Reveal.jsx";
 
 const COPY = {
   student: { idLabel: "Student ID", placeholder: "e.g. 240107001" },
@@ -16,6 +14,7 @@ export default function Login() {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
   if (user) return <Navigate to={location.state?.from || "/"} replace />;
 
@@ -26,13 +25,14 @@ export default function Login() {
     setError("");
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    const result = login(role, id.trim(), password);
+    setBusy(true);
+    setError("");
+    const result = await login(role, id.trim(), password);
+    setBusy(false);
     if (!result.ok) setError(result.error);
   };
-
-  const accounts = DEMO_USERS.filter((u) => u.role === role);
 
   return (
     <section className="login">
@@ -75,36 +75,10 @@ export default function Login() {
           />
         </label>
         {error && <p className="error">{error}</p>}
-        <button type="submit">Sign in</button>
+        <button type="submit" disabled={busy}>
+          Sign in
+        </button>
       </form>
-
-      <div className="card demo">
-        <strong>Demo accounts</strong>
-        <p className="muted">
-          The backend has no login yet, so these accounts live in the frontend. Click one to fill the
-          form.
-        </p>
-        <ul className="list">
-          {accounts.map((a, i) => (
-            <Reveal as="li" key={`${role}-${a.login}`} className="list-item" index={i}>
-              <span>
-                {a.login} <span className="muted">/ {a.password}</span>
-              </span>
-              <button
-                type="button"
-                className="secondary"
-                onClick={() => {
-                  setId(a.login);
-                  setPassword(a.password);
-                  setError("");
-                }}
-              >
-                Use
-              </button>
-            </Reveal>
-          ))}
-        </ul>
-      </div>
     </section>
   );
 }

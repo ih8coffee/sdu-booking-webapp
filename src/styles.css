@@ -560,14 +560,6 @@ select {
   color: var(--text);
 }
 
-.demo {
-  margin-top: 16px;
-}
-
-.demo p {
-  margin: 4px 0 12px;
-}
-
 .user-box {
   display: flex;
   align-items: center;
